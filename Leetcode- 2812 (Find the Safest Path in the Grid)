@@ -1,0 +1,88 @@
+class Solution {
+public: 
+    bool checkBFS(int safeFactor, vector<vector<int>> &man_dis, vector<vector<int>> directions) {
+        int n = man_dis.size();
+        queue<pair<int,int>>q;
+        vector<vector<bool>> vis(n, vector<bool>(n, false));
+        q.push({0, 0});
+        vis[0][0] = true;
+        if (man_dis[0][0] < safeFactor) {
+            return false;
+        }
+        while (! q.empty()) {
+            auto fnode = q.front();
+            if (fnode.first == n-1 && fnode.second == n-1) {
+                return true;
+            }
+            for (auto &dirc : directions) {
+                int new_i = fnode.first + dirc[0];
+                int new_j = fnode.second + dirc[1];
+                if (new_i >= 0 && new_i < n && new_j >= 0 && new_j < n && !vis[new_i][new_j]) {
+                    if(man_dis[new_i][new_j] < safeFactor) {
+                        continue;
+                    }
+                    q.push({new_i, new_j});
+                    vis[new_i][new_j] = true;
+                }
+            }
+            q.pop();
+        }
+        return false;
+    }
+    void calculate_man_dis(vector<vector<int>> &man_dis, vector<vector<int>>& grid, 
+        vector<vector<bool>> &vis, int n, vector<vector<int>> directions) {
+        queue<pair<int,int>> q;
+        int level = 0;
+        for (int i = 0; i < n; i++) {
+            for (int j = 0; j < n; j++) {
+                if (grid[i][j] == 1) {
+                    q.push({i, j});
+                    vis[i][j] = true;
+                }
+            }
+        }
+        while (! q.empty()) {
+            int size = q.size();
+            while (size --) {
+                auto fnode = q.front();
+                q.pop();
+                man_dis[fnode.first][fnode.second] = level;
+                for (auto &dirc : directions) {
+                    int new_i = fnode.first + dirc[0];
+                    int new_j = fnode.second + dirc[1];
+                    if (new_i < 0 || new_i >= n || new_j < 0 || new_j >= n || vis[new_i][new_j]) {
+                        continue;
+                    }
+                    q.push({new_i, new_j});
+                    vis[new_i][new_j] = true;
+                }
+            }
+            level++;
+        }
+    }
+    int binarySearch(vector<vector<int>> &man_dis, vector<vector<int>> directions) {
+        int start = 0;
+        int end = 400;
+        int res = 0;
+        while(start <= end) {
+            int safeFactor = start + (end - start) / 2;
+            if (checkBFS(safeFactor, man_dis, directions)) {
+                res = safeFactor;
+                start = safeFactor + 1;
+            }
+            else {
+                end = safeFactor - 1;
+            }
+        }
+        return res;
+    }
+    int maximumSafenessFactor(vector<vector<int>>& grid) {
+        int n = grid.size();
+        vector<vector<int>> man_dis(n, vector<int>(n, -1));
+        vector<vector<bool>> vis(n, vector<bool>(n, false));
+        vector<vector<int>> directions {{1,0}, {-1,0}, {0,1}, {0,-1}};
+        calculate_man_dis(man_dis, grid, vis, n, directions);
+        int result = binarySearch(man_dis, directions);
+        return result;
+    }
+};
