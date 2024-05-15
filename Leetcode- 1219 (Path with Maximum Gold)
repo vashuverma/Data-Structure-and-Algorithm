@@ -1,0 +1,59 @@
+class Solution {
+public:
+    vector<vector<int>> directions = {{-1,0}, {1,0}, {0,-1}, {0,1}};
+    int DFS(vector<vector<int>>& grid, int i, int j, int n, int m) {
+        if (i < 0 || i >= n || j < 0 || j >= m || grid[i][j] == 0) {
+            return 0;
+        }
+        int originalValue = grid[i][j];
+        grid[i][j] = 0;
+        int res = 0;
+        for (auto &dirc : directions) {
+            int new_i = i + dirc[0];
+            int new_j = j + dirc[1];
+            res = max(res, DFS(grid, new_i, new_j, n, m));
+        }
+        grid[i][j] = originalValue;
+        return res + originalValue;
+    }
+    
+    
+    int BFS(vector<vector<int>>& grid, int i, int j, int n, int m) {
+        queue<pair<int,int>> q;
+        q.push({i, j});
+        int res = 0;
+        int sum = 0;
+        while(! q.empty()) {
+            auto fnode = q.front();
+            sum += grid[fnode.first][fnode.second];
+            int originalValue = grid[fnode.first][fnode.second];
+            grid[fnode.first][fnode.second] = 0;
+            for (auto &dirc : directions) {
+                int new_i = fnode.first + dirc[0];
+                int new_j = fnode.second + dirc[1];
+                if(new_i >= 0 || new_i < n || new_j >= 0 || new_j < m || grid[new_i][new_j] != 0) {
+                    q.push({new_i, new_j});
+                }
+            }
+            grid[fnode.first][fnode.second] = originalValue;
+            q.pop();
+        }
+        return max(res, sum);
+    }
+    
+    
+    int getMaximumGold(vector<vector<int>>& grid) {
+        int n = grid.size();
+        int m = grid[0].size();
+        int result = 0;
+        for (int i = 0; i < n; i++) {
+            for (int j = 0; j < m; j++) {
+                if (grid[i][j] != 0) {
+                    // result = max(DFS(grid, i, j, n, m), result);
+                    result = max(BFS(grid, i, j, n, m), result);
+                }
+            }
+        }
+        return result;
+    }
+};
