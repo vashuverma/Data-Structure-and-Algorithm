@@ -1,0 +1,25 @@
+class Solution {
+public:
+    bool solver(TreeNode* root) {
+        if(root){
+            if(root->val == 0) {
+                return false;
+            }
+            else if(root->val == 1) {
+                return true;
+            }
+            else if(root->val == 2) {
+                return solver(root->left) || solver(root->right);
+            }
+            else {
+                return solver(root->left) && solver(root->right);
+            }
+        }
+        else {
+            return false;
+        }
+    }
+    bool evaluateTree(TreeNode* root) {
+        return solver(root);
+    }
+};
