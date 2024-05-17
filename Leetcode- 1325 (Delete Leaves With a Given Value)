@@ -1,0 +1,17 @@
+class Solution {
+public:
+    void DFS(TreeNode* &root, int target) {
+        if(root) {
+            DFS(root->left, target);
+            DFS(root->right, target);
+            if(root->left == nullptr && root->right == nullptr && root->val == target) {
+                root = nullptr;
+            }
+        }
+        return;
+    }
+    TreeNode* removeLeafNodes(TreeNode* root, int target) {
+        DFS(root, target);
+        return root;
+    }
+};
