@@ -1,0 +1,35 @@
+class Solution {
+public: 
+    void cal_sum(TreeNode* root, int &sum) {
+        if(root) {
+            sum += root->val;
+            if(root->left) cal_sum(root->left, sum);
+            if(root->right) cal_sum(root->right, sum);
+        }
+    }
+    void solver(TreeNode* root, int &res) {
+        if(root) {
+            int leftsum = 0;
+            int rightsum = 0;
+            if(root -> left) {
+                cal_sum(root->left, leftsum);
+            }
+            if(root -> right) {
+                cal_sum(root->right, rightsum);
+            }
+            root->val = abs(leftsum - rightsum);
+            res += root->val;
+            if(root -> left) {
+                solver(root->left, res);
+            }
+            if(root -> right) {
+                solver(root->right, res);
+            }
+        }
+    }
+    int findTilt(TreeNode* root) {
+        int res=0;
+        solver(root, res);
+        return res;
+    }
+};
