@@ -1,0 +1,44 @@
+class Solution {
+public:
+    void BFS(vector<vector<int>>& mat, vector<vector<bool>> &vis, vector<int> &res, int n, int m) {
+        queue<pair<int,int>> q;
+        vector<vector<int>> directions = {{0,1}, {1,0}};
+        q.push({0, 0});
+        bool flag = false;
+        vis[0][0] = true;
+        while(! q.empty()) {
+            int s = q.size();
+            vector<int> temp;
+            while(s--) {
+                auto fnode = q.front();
+                int i = fnode.first;
+                int j = fnode.second;
+                temp.push_back(mat[i][j]);
+                for(auto &dirc : directions) {
+                    int new_i = i + dirc[0];
+                    int new_j = j + dirc[1];
+                    if(new_i >= 0 && new_i <n && new_j >= 0 && new_j < m && !vis[new_i][new_j]) {
+                        q.push({new_i, new_j});
+                        vis[new_i][new_j] = true;
+                    }
+                }
+                q.pop();
+            }
+            if(flag == false) {
+                reverse(temp.begin(), temp.end());
+            }
+            for(auto i : temp) {
+                res.push_back(i);
+            }
+            flag = !flag;
+        }
+    }
+    vector<int> findDiagonalOrder(vector<vector<int>>& mat) {
+        int n = mat.size();
+        int m = mat[0].size();
+        vector<vector<bool>> vis(n, vector<bool>(m, false));
+        vector<int> res;
+        BFS(mat, vis, res, n, m);
+        return res;
+    }
+};
