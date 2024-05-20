@@ -1,0 +1,63 @@
+#-----------------------------------------------------Approach-1----------------------------------------------------------#
+class Solution {
+public:
+    void calculate_subsets(vector<int> &nums, int i, vector<vector<int>> &subSets, vector<int> &currSubSet) {
+        if(nums.size() == i) {
+            subSets.push_back(currSubSet);
+            return;
+        }
+        currSubSet.push_back(nums[i]);
+        calculate_subsets(nums, i+1, subSets, currSubSet);
+        currSubSet.pop_back();
+        calculate_subsets(nums, i+1, subSets, currSubSet);
+    }
+    int subsetXORSum(vector<int>& nums) {
+        vector<vector<int>> subSets;
+        vector<int> currSubSet;
+        calculate_subsets(nums, 0, subSets, currSubSet);
+        int result = 0;
+        for(auto i : subSets) {
+            int temp = 0;
+            for(auto j : i) {
+                temp = temp ^ j;
+            }
+            result = result + temp;
+        }
+        return result;
+    }
+};
+
+
+
+
+#--------------------------------------------------------Approach-2-----------------------------------------------------------------#
+class Solution {
+public:
+    int calculate_xor(vector<int> &nums, int i, int Xor) {
+        if(nums.size() == i) {
+            return Xor;
+        }
+        int include = calculate_xor(nums, i+1, Xor ^ nums[i]);
+        int exclude = calculate_xor(nums, i+1, Xor);
+        return include + exclude;
+    }
+    int subsetXORSum(vector<int>& nums) {
+        return calculate_xor(nums, 0, 0);
+    }
+};
+
+
+
+
+#--------------------------------------------------------Approach-3-----------------------------------------------------------------#
+class Solution {
+public:
+    int subsetXORSum(vector<int>& nums) {
+        int n = nums.size();
+        int result = 0;
+        for(auto i : nums) {
+            result |= i;
+        }
+        return result << (n-1);
+    }
+};
